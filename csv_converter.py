@@ -13,7 +13,6 @@ parser.add_argument('-CSV', nargs='?', help=".csv file to be converted", require
 args = parser.parse_args()
 
 csvfile = args.CSV
-#excelname = csv[:-4] + ".xlsx"
 linelist = []
 firstline = []
 tmp_csv = csvfile[:-4] + "_tmp.csv"
@@ -29,7 +28,7 @@ filecontents = copyfile.readlines()
 with open(csvfile, 'r') as csv_file:
 	with open(tmp_csv, 'w') as temp_csv:
 		csvwriter = csv.writer(temp_csv)
-		count = 0 #maybe goes outside for loop here
+		count = 0
 		for id, line in enumerate(csv_file):
 			if count > 0:
 				count -= 1
@@ -46,22 +45,14 @@ with open(csvfile, 'r') as csv_file:
 			while not (line.startswith('"') and line.endswith('"""\n')):
 				try:
 					if line[-2:] == ';\n':
-						#print(line[-2])
-						#print(repr(line[-1:]))
-						#print(repr(line[:-2] + '\n'))
 						line = line[:-2] + '\n'
 						continue
 				except IndexError:
 					pass
-				#print(repr(line))
 				line = line[:-2]
-				#print(line + '\n')
 				line = line + filecontents[id + count + 1]
 				count += 1
 				linelist.append(line)
-				#print(line)
-
-				#print(linelist)
 			line = line[0:-4]
 			line_match = re.search(r'^("\d*)', line, flags=re.MULTILINE)
 			startingnumber = line_match.group(1)
@@ -69,14 +60,12 @@ with open(csvfile, 'r') as csv_file:
 			line = line[matchlength:]
 			newstartnumber = startingnumber[1:] + '""'
 			line = newstartnumber + line
-			#linelist.append(line)
 			csvline = line.split('"",""')
 			if len(csvline) != len(firstline):
 				print("ERROR in line creation")
 				print(line)
 				sys.exit()
 			csvwriter.writerow(csvline)
-			#print("iteration completed")
 
 copyfile.close()
 
